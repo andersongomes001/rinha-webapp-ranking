@@ -165,6 +165,7 @@ export function RankingFilters({data, onFilterChange, isRefreshing, handleRefres
                     </CardTitle>
                     <div className={"flex gap-2"}>
                         <Button
+                            title={"Atualizar dados (a API é atualizada a cada 5 minutos)"}
                             onClick={handleRefresh}
                             disabled={isRefreshing}
                             size="sm"

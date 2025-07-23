@@ -161,7 +161,7 @@ export function RankingTable({ data }: RankingTableProps) {
                     return (
                         <Button className={"cursor-pointer"} key={idx} variant="outline" size="sm" asChild>
                           <a href={social} target="_blank" rel="noopener noreferrer">
-                            <LinkedinIcon className="h-4 w-4" />
+                            <LinkedinIcon className="h-4 w-4 text-[#0e76a8]" />
                           </a>
                         </Button>
                     )
@@ -169,7 +169,7 @@ export function RankingTable({ data }: RankingTableProps) {
                     return (
                         <Button className={"cursor-pointer"} key={idx} variant="outline" size="sm" asChild>
                           <a href={social} target="_blank" rel="noopener noreferrer">
-                            <TwitterIcon className="h-4 w-4" />
+                            <TwitterIcon className="h-4 w-4 text-[#00acee]" />
                           </a>
                         </Button>
                     )
@@ -185,7 +185,7 @@ export function RankingTable({ data }: RankingTableProps) {
                     return (
                         <Button className={"cursor-pointer"} key={idx} variant="outline" size="sm" asChild>
                           <a href={social} target="_blank" rel="noopener noreferrer">
-                            <YoutubeIcon className="h-4 w-4" />
+                            <YoutubeIcon className="h-4 w-4 text-[#c4302b]" />
                           </a>
                         </Button>
                     )
@@ -208,7 +208,9 @@ export function RankingTable({ data }: RankingTableProps) {
             </TableCell>
             <TableCell>
               <div className="flex gap-2">
-                <Button className={"cursor-pointer"} variant="outline" size="sm" asChild>
+                <Button
+                    title={"Ver código fonte do participante"}
+                    className={"cursor-pointer"} variant="outline" size="sm" asChild>
                   <a href={participant["source-code-repo"]} target="_blank" rel="noopener noreferrer">
                     <Github className="h-4 w-4" />
                     Código
@@ -217,8 +219,11 @@ export function RankingTable({ data }: RankingTableProps) {
 
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button className={"cursor-pointer"} variant="outline" size="sm" onClick={() => setSelectedParticipant(participant)}>
-                      <Info className="h-4 w-4" />
+                    <Button className={"cursor-pointer"}
+                            variant="outline" size="sm"
+                            onClick={() => setSelectedParticipant(participant)}
+                            title={"Informações do participante"}>
+                      <Info className="h-4 w-4 text-red-600"/>
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
@@ -338,7 +343,7 @@ export function RankingTable({ data }: RankingTableProps) {
                                 return (
                                     <Button className={"cursor-pointer"} key={idx} size="sm" asChild>
                                       <a href={social} target="_blank" rel="noopener noreferrer">
-                                        <LinkedinIcon className="h-4 w-4 mr-2" />
+                                        <LinkedinIcon className="h-4 w-4 mr-2 text-[#0e76a8]" />
                                         LinkedIn
                                       </a>
                                     </Button>
