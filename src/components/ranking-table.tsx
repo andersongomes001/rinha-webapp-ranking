@@ -8,9 +8,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table"
 import {
   Github,
-  Trophy,
-  Medal,
-  Award,
   Info,
   Search,
   LinkedinIcon,
