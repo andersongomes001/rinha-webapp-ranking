@@ -70,9 +70,7 @@ export function RankingFilters({data, onFilterChange, isRefreshing, handleRefres
         // Filtro de busca por nome/participante
         if (searchTerm) {
             filtered = filtered.filter(
-                (item) =>
-                    item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    item.data.participante.toLowerCase().includes(searchTerm.toLowerCase()),
+                (item) => item.name.toLowerCase().includes(searchTerm.toLowerCase()) || item.data.participante.toLowerCase().includes(searchTerm.toLowerCase()) || item.langs?.some((lang : string) => lang.toUpperCase().includes(selectedLanguage.toUpperCase())),
             )
         }
 
