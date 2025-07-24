@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import {formatMsToScientific} from "../utils/format.ts";
 import {SortableHeader} from "./sortableHeader.tsx";
+import {formatUrl} from "@/utils/validator.ts";
 
 interface RankingData {
     name: string;
@@ -286,7 +287,7 @@ export function RankingTable({data}: RankingTableProps) {
                                                     asChild
                                                 >
                                                     <a
-                                                        href={social}
+                                                        href={formatUrl(social)}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                     >
@@ -307,7 +308,7 @@ export function RankingTable({data}: RankingTableProps) {
                                                     asChild
                                                 >
                                                     <a
-                                                        href={social}
+                                                        href={formatUrl(social)}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                     >
@@ -325,7 +326,7 @@ export function RankingTable({data}: RankingTableProps) {
                                                     asChild
                                                 >
                                                     <a
-                                                        href={social}
+                                                        href={formatUrl(social)}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                     >
@@ -343,7 +344,7 @@ export function RankingTable({data}: RankingTableProps) {
                                                     asChild
                                                 >
                                                     <a
-                                                        href={social}
+                                                        href={formatUrl(social)}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                     >
@@ -361,7 +362,7 @@ export function RankingTable({data}: RankingTableProps) {
                                                     asChild
                                                 >
                                                     <a
-                                                        href={social}
+                                                        href={formatUrl(social)}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                     >
@@ -379,7 +380,7 @@ export function RankingTable({data}: RankingTableProps) {
                                                 asChild
                                             >
                                                 <a
-                                                    href={social}
+                                                    href={formatUrl(social)}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                 >
@@ -602,7 +603,7 @@ export function RankingTable({data}: RankingTableProps) {
                                                                         asChild
                                                                     >
                                                                         <a
-                                                                            href={social}
+                                                                            href={formatUrl(social)}
                                                                             target="_blank"
                                                                             rel="noopener noreferrer"
                                                                         >
