@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "./ui/select";
 import { X, Search, Filter, RefreshCw } from "lucide-react";
-import type { RankingData } from "../ranking-data";
+import type {RankingData} from "@/types/ranking-data.ts";
 
 interface RankingFiltersProps {
   data: RankingData[];

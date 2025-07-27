@@ -1,4 +1,4 @@
-export interface RankingData {
+export type RankingData = {
     name: string
     data: {
         participante: string
@@ -22,6 +22,23 @@ export interface RankingData {
         pagamentos_solicitados: {
             qtd_sucesso: number
             qtd_falha: number
+        }
+        caixa_dois: {
+            descricao: string
+            detectado: boolean
+        }
+        descricao: string
+        pagamentos_realizados_default: {
+            descricao: string
+            num_pagamentos: number
+            total_bruto: number
+            total_taxas: number
+        }
+        pagamentos_realizados_fallback: {
+            descricao: string
+            num_pagamentos: number
+            total_bruto: number
+            total_taxas: number
         }
     }
     langs: string[]
