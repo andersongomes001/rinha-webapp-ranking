@@ -258,7 +258,7 @@ export function RankingTable({data}: RankingTableProps) {
                             </TableCell>
                             <TableCell>
                                 <Badge variant="secondary" className="text-xs">
-                                    +{(participant.data.p99.bonus * 100).toFixed(2)}%
+                                    +{(participant.data.p99.bonus).toFixed(2)}%
                                 </Badge>
                             </TableCell>
                             <TableCell>
@@ -495,7 +495,7 @@ export function RankingTable({data}: RankingTableProps) {
                                                                     <span className="text-green-600">
                                     +
                                                                         {(
-                                                                            selectedParticipant.data.p99.bonus * 100
+                                                                            selectedParticipant.data.p99.bonus
                                                                         ).toFixed(2)}
                                                                         %
                                   </span>
