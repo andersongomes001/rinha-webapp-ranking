@@ -1,5 +1,6 @@
-import type {RankingData} from "@/ranking-data.ts";
+
 import {Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts";
+import type {RankingData} from "@/types/ranking-data.ts";
 
 interface RankingLangsProps {
     rankingData?: RankingData[]

@@ -11,10 +11,10 @@ import {
     CardTitle,
 } from "./components/ui/card";
 import {Button} from "./components/ui/button";
-import type {RankingData} from "./ranking-data";
 import {RankingFilters} from "./components/ranking-filters";
 import {RankingTable} from "./components/ranking-table";
 import {RankingLangs} from "./components/ranking-langs";
+import type {RankingData} from "@/types/ranking-data.ts";
 
 function App() {
     const [rankingData, setRankingData] = useState<RankingData[]>([]);

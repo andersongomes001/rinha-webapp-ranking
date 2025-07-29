@@ -3,14 +3,6 @@
 import {useState} from "react";
 import {Badge} from "./ui/badge";
 import {Button} from "./ui/button";
-import {Card, CardContent, CardHeader, CardTitle} from "./ui/card";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "./ui/dialog";
 import {
     Table,
     TableBody,
@@ -21,7 +13,6 @@ import {
 } from "./ui/table";
 import {
     Github,
-    Info,
     Search,
     LinkedinIcon,
     TwitterIcon,
@@ -30,50 +21,17 @@ import {
     InstagramIcon,
     GlobeIcon,
 } from "lucide-react";
-import {formatMsToScientific} from "../utils/format.ts";
 import {SortableHeader} from "./sortableHeader.tsx";
 import {formatUrl} from "@/utils/validator.ts";
-
-interface RankingData {
-    name: string;
-    data: {
-        participante: string;
-        total_liquido: number;
-        total_bruto: number;
-        total_taxas: number;
-        p99: {
-            valor: string;
-            bonus: number;
-            max_requests: string;
-        };
-        multa: {
-            porcentagem: number;
-            total: number;
-        };
-        lag: {
-            lag: number;
-            num_pagamentos_solicitados: number;
-            num_pagamentos_total: number;
-        };
-        pagamentos_solicitados: {
-            qtd_sucesso: number;
-            qtd_falha: number;
-        };
-    };
-    langs: string[];
-    "load-balancers": string[];
-    messaging: string[];
-    storages: string[];
-    social: string[];
-    "source-code-repo": string;
-}
+import {DialogInfo} from "@/components/dialog-info.tsx";
+import type {RankingData} from "@/types/ranking-data.ts";
 
 interface RankingTableProps {
     data: RankingData[];
 }
 
 function getNested(obj: any, path: string) {
-    return path.split('.').reduce((acc, part) => {
+    return path.split('.').reduce((acc: any, part: string) => {
         return acc && acc[part];
     }, obj);
 }
@@ -81,8 +39,7 @@ function getNested(obj: any, path: string) {
 export function RankingTable({data}: RankingTableProps) {
     const [sortBy, setSortBy] = useState<string>("total_liquido");
     const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
-    const [selectedParticipant, setSelectedParticipant] =
-        useState<RankingData | null>(null);
+    const [selectedParticipant, setSelectedParticipant] = useState<RankingData | null>(null);
 
 
     // Ordenar por total_liquido (maior para menor)
@@ -218,10 +175,11 @@ export function RankingTable({data}: RankingTableProps) {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {sortedData.map((participant, index) => (
+                    {sortedData.map((participant: RankingData, index) => (
                         <TableRow
+                            title={participant.data.caixa_dois?.detectado? "Caixa Dois detectado": ""}
                             key={participant.data.participante}
-                            className="hover:bg-slate-50 dark:hover:bg-slate-800"
+                            className={`hover:bg-slate-50 dark:hover:bg-slate-800 ${participant.data.caixa_dois?.detectado? "bg-red-50 hover:bg-red-300 dark:bg-red-900 hover:dark:bg-red-600" : ""}`}
                         >
                             <TableCell className="font-medium">
                                 {getRankIcon(index + 1)}
@@ -409,232 +367,239 @@ export function RankingTable({data}: RankingTableProps) {
                                             Código
                                         </a>
                                     </Button>
+                                    <DialogInfo key={index} participant={participant}
+                                                setSelectedParticipant={setSelectedParticipant}
+                                                getRankIcon={getRankIcon}
+                                                formatCurrency={formatCurrency}
+                                                selectedParticipant={selectedParticipant}
+                                                index={index}
+                                    />
 
-                                    <Dialog>
-                                        <DialogTrigger asChild>
-                                            <Button
-                                                className={"cursor-pointer"}
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={() => setSelectedParticipant(participant)}
-                                                title={"Informações do participante"}
-                                            >
-                                                <Info className="h-4 w-4 text-red-600"/>
-                                            </Button>
-                                        </DialogTrigger>
-                                        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-                                            <DialogHeader>
-                                                <DialogTitle className="flex items-center gap-2">
-                                                    {getRankIcon(index + 1)}
-                                                    {participant.name}
-                                                </DialogTitle>
-                                            </DialogHeader>
-                                            {selectedParticipant && (
-                                                <div className="space-y-4">
-                                                    <div className="grid lg:grid-cols-2 gap-4">
-                                                        <Card>
-                                                            <CardHeader className="pb-2">
-                                                                <CardTitle className="text-sm">
-                                                                    Financeiro
-                                                                </CardTitle>
-                                                            </CardHeader>
-                                                            <CardContent className="space-y-2">
-                                                                <div className="flex justify-between">
-                                  <span className="text-sm text-slate-600">
-                                    Total Líquido:
-                                  </span>
-                                                                    <span className="font-semibold text-green-600">
-                                    {formatCurrency(
-                                        selectedParticipant.data.total_liquido
-                                    )}
-                                  </span>
-                                                                </div>
-                                                                <div className="flex justify-between">
-                                  <span className="text-sm text-slate-600">
-                                    Total Bruto:
-                                  </span>
-                                                                    <span>
-                                    {formatCurrency(
-                                        selectedParticipant.data.total_bruto
-                                    )}
-                                  </span>
-                                                                </div>
-                                                                <div className="flex justify-between">
-                                  <span className="text-sm text-slate-600">
-                                    Total Taxas:
-                                  </span>
-                                                                    <span className="text-red-600">
-                                    {formatCurrency(
-                                        selectedParticipant.data.total_taxas
-                                    )}
-                                  </span>
-                                                                </div>
-                                                            </CardContent>
-                                                        </Card>
-                                                        <Card>
-                                                            <CardHeader className="pb-2">
-                                                                <CardTitle className="text-sm">
-                                                                    Performance
-                                                                </CardTitle>
-                                                            </CardHeader>
-                                                            <CardContent className="space-y-2">
-                                                                <div className="flex justify-between">
-                                  <span className="text-sm text-slate-600">
-                                    P99:
-                                  </span>
-                                                                    <span>
-                                                                        {formatMsToScientific(selectedParticipant.data.p99.valor).concat("ms")}
+                                  {/*  <Dialog>*/}
+                                  {/*      <DialogTrigger asChild>*/}
+                                  {/*          <Button*/}
+                                  {/*              className={"cursor-pointer"}*/}
+                                  {/*              variant="outline"*/}
+                                  {/*              size="sm"*/}
+                                  {/*              onClick={() => setSelectedParticipant(participant)}*/}
+                                  {/*              title={"Informações do participante"}*/}
+                                  {/*          >*/}
+                                  {/*              <Info className="h-4 w-4 text-red-600"/>*/}
+                                  {/*          </Button>*/}
+                                  {/*      </DialogTrigger>*/}
+                                  {/*      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">*/}
+                                  {/*          <DialogHeader>*/}
+                                  {/*              <DialogTitle className="flex items-center gap-2">*/}
+                                  {/*                  {getRankIcon(index + 1)}*/}
+                                  {/*                  {participant.name}*/}
+                                  {/*              </DialogTitle>*/}
+                                  {/*          </DialogHeader>*/}
+                                  {/*          {selectedParticipant && (*/}
+                                  {/*              <div className="space-y-4">*/}
+                                  {/*                  <div className="grid lg:grid-cols-2 gap-4">*/}
+                                  {/*                      <Card>*/}
+                                  {/*                          <CardHeader className="pb-2">*/}
+                                  {/*                              <CardTitle className="text-sm">*/}
+                                  {/*                                  Financeiro*/}
+                                  {/*                              </CardTitle>*/}
+                                  {/*                          </CardHeader>*/}
+                                  {/*                          <CardContent className="space-y-2">*/}
+                                  {/*                              <div className="flex justify-between">*/}
+                                  {/*<span className="text-sm text-slate-600">*/}
+                                  {/*  Total Líquido:*/}
+                                  {/*</span>*/}
+                                  {/*                                  <span className="font-semibold text-green-600">*/}
+                                  {/*  {formatCurrency(*/}
+                                  {/*      selectedParticipant.data.total_liquido*/}
+                                  {/*  )}*/}
+                                  {/*</span>*/}
+                                  {/*                              </div>*/}
+                                  {/*                              <div className="flex justify-between">*/}
+                                  {/*<span className="text-sm text-slate-600">*/}
+                                  {/*  Total Bruto:*/}
+                                  {/*</span>*/}
+                                  {/*                                  <span>*/}
+                                  {/*  {formatCurrency(*/}
+                                  {/*      selectedParticipant.data.total_bruto*/}
+                                  {/*  )}*/}
+                                  {/*</span>*/}
+                                  {/*                              </div>*/}
+                                  {/*                              <div className="flex justify-between">*/}
+                                  {/*<span className="text-sm text-slate-600">*/}
+                                  {/*  Total Taxas:*/}
+                                  {/*</span>*/}
+                                  {/*                                  <span className="text-red-600">*/}
+                                  {/*  {formatCurrency(*/}
+                                  {/*      selectedParticipant.data.total_taxas*/}
+                                  {/*  )}*/}
+                                  {/*</span>*/}
+                                  {/*                              </div>*/}
+                                  {/*                          </CardContent>*/}
+                                  {/*                      </Card>*/}
+                                  {/*                      <Card>*/}
+                                  {/*                          <CardHeader className="pb-2">*/}
+                                  {/*                              <CardTitle className="text-sm">*/}
+                                  {/*                                  Performance*/}
+                                  {/*                              </CardTitle>*/}
+                                  {/*                          </CardHeader>*/}
+                                  {/*                          <CardContent className="space-y-2">*/}
+                                  {/*                              <div className="flex justify-between">*/}
+                                  {/*<span className="text-sm text-slate-600">*/}
+                                  {/*  P99:*/}
+                                  {/*</span>*/}
+                                  {/*                                  <span>*/}
+                                  {/*                                      {formatMsToScientific(selectedParticipant.data.p99.valor).concat("ms")}*/}
 
 
-                                  </span>
-                                                                </div>
-                                                                <div className="flex justify-between">
-                                  <span className="text-sm text-slate-600">
-                                    Bônus:
-                                  </span>
-                                                                    <span className="text-green-600">
-                                    +
-                                                                        {(
-                                                                            selectedParticipant.data.p99.bonus
-                                                                        ).toFixed(2)}
-                                                                        %
-                                  </span>
-                                                                </div>
-                                                                <div className="flex justify-between">
-                                  <span className="text-sm text-slate-600">
-                                    Max Requests:
-                                  </span>
-                                                                    <span>
-                                    {selectedParticipant.data.p99.max_requests}
-                                                                        /s
-                                  </span>
-                                                                </div>
-                                                            </CardContent>
-                                                        </Card>
-                                                    </div>
+                                  {/*</span>*/}
+                                  {/*                              </div>*/}
+                                  {/*                              <div className="flex justify-between">*/}
+                                  {/*<span className="text-sm text-slate-600">*/}
+                                  {/*  Bônus:*/}
+                                  {/*</span>*/}
+                                  {/*                                  <span className="text-green-600">*/}
+                                  {/*  +*/}
+                                  {/*                                      {(*/}
+                                  {/*                                          selectedParticipant.data.p99.bonus*/}
+                                  {/*                                      ).toFixed(2)}*/}
+                                  {/*                                      %*/}
+                                  {/*</span>*/}
+                                  {/*                              </div>*/}
+                                  {/*                              <div className="flex justify-between">*/}
+                                  {/*<span className="text-sm text-slate-600">*/}
+                                  {/*  Max Requests:*/}
+                                  {/*</span>*/}
+                                  {/*                                  <span>*/}
+                                  {/*  {selectedParticipant.data.p99.max_requests}*/}
+                                  {/*                                      /s*/}
+                                  {/*</span>*/}
+                                  {/*                              </div>*/}
+                                  {/*                          </CardContent>*/}
+                                  {/*                      </Card>*/}
+                                  {/*                  </div>*/}
 
-                                                    <div className="grid lg:grid-cols-2 gap-4">
-                                                        <Card>
-                                                            <CardHeader className="pb-2">
-                                                                <CardTitle className="text-sm">
-                                                                    Pagamentos
-                                                                </CardTitle>
-                                                            </CardHeader>
-                                                            <CardContent className="space-y-2">
-                                                                <div className="flex justify-between">
-                                  <span className="text-sm text-slate-600">
-                                    Sucesso:
-                                  </span>
-                                                                    <span className="text-green-600">
-                                    {selectedParticipant.data.pagamentos_solicitados.qtd_sucesso.toLocaleString()}
-                                  </span>
-                                                                </div>
-                                                                <div className="flex justify-between">
-                                  <span className="text-sm text-slate-600">
-                                    Falha:
-                                  </span>
-                                                                    <span className="text-red-600">
-                                    {selectedParticipant.data.pagamentos_solicitados.qtd_falha.toLocaleString()}
-                                  </span>
-                                                                </div>
-                                                                <div className="flex justify-between">
-                                  <span className="text-sm text-slate-600">
-                                    Lag:
-                                  </span>
-                                                                    <span>
-                                    {selectedParticipant.data.lag.lag}
-                                  </span>
-                                                                </div>
-                                                            </CardContent>
-                                                        </Card>
-                                                        <Card>
-                                                            <CardHeader className="pb-2">
-                                                                <CardTitle className="text-sm">
-                                                                    Tecnologias
-                                                                </CardTitle>
-                                                            </CardHeader>
-                                                            <CardContent className="space-y-2">
-                                                                <div>
-                                  <span className="text-sm text-slate-600">
-                                    Linguagens:
-                                  </span>
-                                                                    <div className="flex flex-wrap gap-1 mt-1">
-                                                                        {selectedParticipant.langs.map((lang) => (
-                                                                            <Badge
-                                                                                key={lang}
-                                                                                variant="outline"
-                                                                                className="text-xs"
-                                                                            >
-                                                                                {lang}
-                                                                            </Badge>
-                                                                        ))}
-                                                                    </div>
-                                                                </div>
-                                                                <div>
-                                  <span className="text-sm text-slate-600">
-                                    Storage:
-                                  </span>
-                                                                    <div className="flex flex-wrap gap-1 mt-1">
-                                                                        {selectedParticipant.storages.map(
-                                                                            (storage) => (
-                                                                                <Badge
-                                                                                    key={storage}
-                                                                                    variant="outline"
-                                                                                    className="text-xs"
-                                                                                >
-                                                                                    {storage}
-                                                                                </Badge>
-                                                                            )
-                                                                        )}
-                                                                    </div>
-                                                                </div>
-                                                            </CardContent>
-                                                        </Card>
-                                                    </div>
+                                  {/*                  <div className="grid lg:grid-cols-2 gap-4">*/}
+                                  {/*                      <Card>*/}
+                                  {/*                          <CardHeader className="pb-2">*/}
+                                  {/*                              <CardTitle className="text-sm">*/}
+                                  {/*                                  Pagamentos*/}
+                                  {/*                              </CardTitle>*/}
+                                  {/*                          </CardHeader>*/}
+                                  {/*                          <CardContent className="space-y-2">*/}
+                                  {/*                              <div className="flex justify-between">*/}
+                                  {/*<span className="text-sm text-slate-600">*/}
+                                  {/*  Sucesso:*/}
+                                  {/*</span>*/}
+                                  {/*                                  <span className="text-green-600">*/}
+                                  {/*  {selectedParticipant.data.pagamentos_solicitados.qtd_sucesso.toLocaleString()}*/}
+                                  {/*</span>*/}
+                                  {/*                              </div>*/}
+                                  {/*                              <div className="flex justify-between">*/}
+                                  {/*<span className="text-sm text-slate-600">*/}
+                                  {/*  Falha:*/}
+                                  {/*</span>*/}
+                                  {/*                                  <span className="text-red-600">*/}
+                                  {/*  {selectedParticipant.data.pagamentos_solicitados.qtd_falha.toLocaleString()}*/}
+                                  {/*</span>*/}
+                                  {/*                              </div>*/}
+                                  {/*                              <div className="flex justify-between">*/}
+                                  {/*<span className="text-sm text-slate-600">*/}
+                                  {/*  Lag:*/}
+                                  {/*</span>*/}
+                                  {/*                                  <span>*/}
+                                  {/*  {selectedParticipant.data.lag.lag}*/}
+                                  {/*</span>*/}
+                                  {/*                              </div>*/}
+                                  {/*                          </CardContent>*/}
+                                  {/*                      </Card>*/}
+                                  {/*                      <Card>*/}
+                                  {/*                          <CardHeader className="pb-2">*/}
+                                  {/*                              <CardTitle className="text-sm">*/}
+                                  {/*                                  Tecnologias*/}
+                                  {/*                              </CardTitle>*/}
+                                  {/*                          </CardHeader>*/}
+                                  {/*                          <CardContent className="space-y-2">*/}
+                                  {/*                              <div>*/}
+                                  {/*<span className="text-sm text-slate-600">*/}
+                                  {/*  Linguagens:*/}
+                                  {/*</span>*/}
+                                  {/*                                  <div className="flex flex-wrap gap-1 mt-1">*/}
+                                  {/*                                      {selectedParticipant.langs.map((lang) => (*/}
+                                  {/*                                          <Badge*/}
+                                  {/*                                              key={lang}*/}
+                                  {/*                                              variant="outline"*/}
+                                  {/*                                              className="text-xs"*/}
+                                  {/*                                          >*/}
+                                  {/*                                              {lang}*/}
+                                  {/*                                          </Badge>*/}
+                                  {/*                                      ))}*/}
+                                  {/*                                  </div>*/}
+                                  {/*                              </div>*/}
+                                  {/*                              <div>*/}
+                                  {/*<span className="text-sm text-slate-600">*/}
+                                  {/*  Storage:*/}
+                                  {/*</span>*/}
+                                  {/*                                  <div className="flex flex-wrap gap-1 mt-1">*/}
+                                  {/*                                      {selectedParticipant.storages.map(*/}
+                                  {/*                                          (storage) => (*/}
+                                  {/*                                              <Badge*/}
+                                  {/*                                                  key={storage}*/}
+                                  {/*                                                  variant="outline"*/}
+                                  {/*                                                  className="text-xs"*/}
+                                  {/*                                              >*/}
+                                  {/*                                                  {storage}*/}
+                                  {/*                                              </Badge>*/}
+                                  {/*                                          )*/}
+                                  {/*                                      )}*/}
+                                  {/*                                  </div>*/}
+                                  {/*                              </div>*/}
+                                  {/*                          </CardContent>*/}
+                                  {/*                      </Card>*/}
+                                  {/*                  </div>*/}
 
-                                                    <div className="flex gap-2">
-                                                        {selectedParticipant?.social?.map((social, idx) => {
-                                                            if (social.includes("linkedin")) {
-                                                                return (
-                                                                    <Button
-                                                                        className={"cursor-pointer"}
-                                                                        key={idx}
-                                                                        size="sm"
-                                                                        asChild
-                                                                    >
-                                                                        <a
-                                                                            href={formatUrl(social)}
-                                                                            target="_blank"
-                                                                            rel="noopener noreferrer"
-                                                                        >
-                                                                            <LinkedinIcon
-                                                                                className="h-4 w-4 mr-2 text-[#0e76a8]"/>
-                                                                            LinkedIn
-                                                                        </a>
-                                                                    </Button>
-                                                                );
-                                                            }
-                                                            return <></>;
-                                                        })}
-                                                        <Button
-                                                            className={"cursor-pointer"}
-                                                            size="sm"
-                                                            asChild
-                                                        >
-                                                            <a
-                                                                href={selectedParticipant["source-code-repo"]}
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                            >
-                                                                <Github className="h-4 w-4 mr-2"/>
-                                                                Código
-                                                            </a>
-                                                        </Button>
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </DialogContent>
-                                    </Dialog>
+                                  {/*                  <div className="flex gap-2">*/}
+                                  {/*                      {selectedParticipant?.social?.map((social, idx) => {*/}
+                                  {/*                          if (social.includes("linkedin")) {*/}
+                                  {/*                              return (*/}
+                                  {/*                                  <Button*/}
+                                  {/*                                      className={"cursor-pointer"}*/}
+                                  {/*                                      key={idx}*/}
+                                  {/*                                      size="sm"*/}
+                                  {/*                                      asChild*/}
+                                  {/*                                  >*/}
+                                  {/*                                      <a*/}
+                                  {/*                                          href={formatUrl(social)}*/}
+                                  {/*                                          target="_blank"*/}
+                                  {/*                                          rel="noopener noreferrer"*/}
+                                  {/*                                      >*/}
+                                  {/*                                          <LinkedinIcon*/}
+                                  {/*                                              className="h-4 w-4 mr-2 text-[#0e76a8]"/>*/}
+                                  {/*                                          LinkedIn*/}
+                                  {/*                                      </a>*/}
+                                  {/*                                  </Button>*/}
+                                  {/*                              );*/}
+                                  {/*                          }*/}
+                                  {/*                          return <></>;*/}
+                                  {/*                      })}*/}
+                                  {/*                      <Button*/}
+                                  {/*                          className={"cursor-pointer"}*/}
+                                  {/*                          size="sm"*/}
+                                  {/*                          asChild*/}
+                                  {/*                      >*/}
+                                  {/*                          <a*/}
+                                  {/*                              href={selectedParticipant["source-code-repo"]}*/}
+                                  {/*                              target="_blank"*/}
+                                  {/*                              rel="noopener noreferrer"*/}
+                                  {/*                          >*/}
+                                  {/*                              <Github className="h-4 w-4 mr-2"/>*/}
+                                  {/*                              Código*/}
+                                  {/*                          </a>*/}
+                                  {/*                      </Button>*/}
+                                  {/*                  </div>*/}
+                                  {/*              </div>*/}
+                                  {/*          )}*/}
+                                  {/*      </DialogContent>*/}
+                                  {/*  </Dialog>*/}
                                 </div>
                             </TableCell>
                         </TableRow>
