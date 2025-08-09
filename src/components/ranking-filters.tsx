@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from "./ui/select";
 import { X, Search, Filter, RefreshCw } from "lucide-react";
+import { Checkbox } from "./ui/checkbox";
 import type { RankingData } from "../ranking-data";
 
 interface RankingFiltersProps {
@@ -37,6 +38,7 @@ export function RankingFilters({
 
   const [minValueInput, setMinValueInput] = useState("");
   const [maxValueInput, setMaxValueInput] = useState("");
+  const [showAllResults, setShowAllResults] = useState(false);
   // Debounce minValueInput
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -157,6 +159,23 @@ export function RankingFilters({
       }
     }
 
+    if (!showAllResults) {
+      const deduplicatedMap = new Map<string, RankingData>();
+
+      for (const item of filtered) {
+        for (const lang of item.langs) {
+          const key = `${item.name}-${lang}`;
+          const existing = deduplicatedMap.get(key);
+
+          if (!existing || item.data.total_liquido > existing.data.total_liquido) {
+            deduplicatedMap.set(key, item);
+          }
+        }
+      }
+
+      filtered = Array.from(deduplicatedMap.values());
+    }
+
     onFilterChange(filtered);
   }, [
     data,
@@ -167,6 +186,7 @@ export function RankingFilters({
     selectedLoadBalancer,
     minValue,
     maxValue,
+    showAllResults,
   ]);
 
   const clearAllFilters = () => {
@@ -179,6 +199,7 @@ export function RankingFilters({
     setMaxValue("");
     setMinValueInput("");
     setMaxValueInput("");
+    setShowAllResults(false);
   };
 
   const hasActiveFilters =
@@ -188,7 +209,8 @@ export function RankingFilters({
     selectedMessaging !== "todos" ||
     selectedLoadBalancer !== "todos" ||
     minValue ||
-    maxValue;
+    maxValue ||
+    showAllResults;
 
   return (
     <Card>
@@ -238,6 +260,21 @@ export function RankingFilters({
             className="pl-10"
             disabled={isRefreshing}
           />
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="showAllResults"
+            checked={showAllResults}
+            onCheckedChange={(checked) => setShowAllResults(!!checked)}
+            disabled={isRefreshing}
+          />
+          <label
+            htmlFor="showAllResults"
+            className="text-sm font-medium text-slate-700 dark:text-slate-300 cursor-pointer"
+          >
+            Mostrar todos os resultados
+          </label>
         </div>
 
         {/* Filtros em grid */}
@@ -450,9 +487,22 @@ export function RankingFilters({
                 </Button>
               </Badge>
             )}
+            {showAllResults && (
+              <Badge variant="secondary" className="flex items-center gap-1">
+                Todos os resultados
+                <Button
+                  variant="ghost"
+                  size={"sm"}
+                  onClick={() => setShowAllResults(false)}
+                >
+                  <X className="h-3 w-3 cursor-pointer" />
+                </Button>
+              </Badge>
+            )}
           </div>
         )}
       </CardContent>
     </Card>
   );
 }
+
