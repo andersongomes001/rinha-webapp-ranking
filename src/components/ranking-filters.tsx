@@ -38,7 +38,7 @@ export function RankingFilters({
 
     const [minValueInput, setMinValueInput] = useState("");
     const [maxValueInput, setMaxValueInput] = useState("");
-    const [showAllResults, setShowAllResults] = useState(false);
+    const [showAllResults, setShowAllResults] = useState(true);
     // Debounce minValueInput
     useEffect(() => {
         const handler = setTimeout(() => {
