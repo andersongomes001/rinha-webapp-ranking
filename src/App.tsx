@@ -250,7 +250,6 @@ function App() {
 
                 <Card className="mt-6">
                     <CardHeader>
-                        <CardTitle>Prévia do Resultados</CardTitle>
                         <CardDescription>
                             {filteredData.length === rankingData.length
                                 ? "Todos os participantes ordenados por total líquido"
