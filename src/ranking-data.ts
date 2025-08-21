@@ -22,12 +22,28 @@ export interface RankingData {
         pagamentos_solicitados: {
             qtd_sucesso: number
             qtd_falha: number
-        }
+        },
+        pagamentos_realizados_default: PagamentosRealizadosDefault
+        pagamentos_realizados_fallback: PagamentosRealizadosFallback
     }
     langs: string[]
     "load-balancers": string[]
     messaging: string[]
     storages: string[]
     social: string[]
-    "source-code-repo": string
+    "source-code-repo": string,
+}
+
+export interface PagamentosRealizadosDefault {
+    descricao: string
+    num_pagamentos: number
+    total_bruto: number
+    total_taxas: number
+}
+
+export interface PagamentosRealizadosFallback {
+    descricao: string
+    num_pagamentos: number
+    total_bruto: number
+    total_taxas: number
 }

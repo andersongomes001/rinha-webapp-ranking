@@ -33,40 +33,8 @@ import {
 import {formatMsToScientific} from "../utils/format.ts";
 import {SortableHeader} from "./sortableHeader.tsx";
 import {formatUrl} from "@/utils/validator.ts";
-
-interface RankingData {
-    name: string;
-    data: {
-        participante: string;
-        total_liquido: number;
-        total_bruto: number;
-        total_taxas: number;
-        p99: {
-            valor: string;
-            bonus: number;
-            max_requests: string;
-        };
-        multa: {
-            porcentagem: number;
-            total: number;
-        };
-        lag: {
-            lag: number;
-            num_pagamentos_solicitados: number;
-            num_pagamentos_total: number;
-        };
-        pagamentos_solicitados: {
-            qtd_sucesso: number;
-            qtd_falha: number;
-        };
-    };
-    langs: string[];
-    "load-balancers": string[];
-    messaging: string[];
-    storages: string[];
-    social: string[];
-    "source-code-repo": string;
-}
+import type {RankingData} from "@/ranking-data.ts";
+import PieChartDF from "@/components/pie-chart-df.tsx";
 
 interface RankingTableProps {
     data: RankingData[];
@@ -275,121 +243,141 @@ export function RankingTable({data}: RankingTableProps) {
                                 </div>
                             </TableCell>
                             <TableCell>
-                                <div className="flex gap-2">
-                                    {participant?.social?.map((social, idx) => {
-                                        if (social.includes("linkedin")) {
-                                            return (
-                                                <Button
-                                                    className={"cursor-pointer"}
-                                                    key={idx}
-                                                    variant="outline"
-                                                    size="sm"
-                                                    asChild
-                                                >
-                                                    <a
-                                                        href={formatUrl(social)}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
+                                <Dialog>
+                                    <DialogTrigger asChild>
+                                        <Button
+                                            className={"cursor-pointer"}
+                                            variant="outline"
+                                            size="sm"
+                                            title={"Links, redes sociais e mais"}
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                 stroke-linecap="round" stroke-linejoin="round"
+                                                 className="lucide lucide-link-icon lucide-link">
+                                                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                                                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                                            </svg>
+                                        </Button>
+                                    </DialogTrigger>
+                                    <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                                        <div className="flex gap-2">
+                                            {participant?.social?.map((social, idx) => {
+                                                if (social.includes("linkedin")) {
+                                                    return (
+                                                        <Button
+                                                            className={"cursor-pointer"}
+                                                            key={idx}
+                                                            variant="outline"
+                                                            size="sm"
+                                                            asChild
+                                                        >
+                                                            <a
+                                                                href={formatUrl(social)}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                            >
+                                                                <LinkedinIcon className="h-4 w-4 text-[#0e76a8]"/>
+                                                            </a>
+                                                        </Button>
+                                                    );
+                                                } else if (
+                                                    social.includes("twitter") ||
+                                                    social.includes("x.com")
+                                                ) {
+                                                    return (
+                                                        <Button
+                                                            className={"cursor-pointer"}
+                                                            key={idx}
+                                                            variant="outline"
+                                                            size="sm"
+                                                            asChild
+                                                        >
+                                                            <a
+                                                                href={formatUrl(social)}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                            >
+                                                                <TwitterIcon className="h-4 w-4 text-[#00acee]"/>
+                                                            </a>
+                                                        </Button>
+                                                    );
+                                                } else if (social.includes("github.com")) {
+                                                    return (
+                                                        <Button
+                                                            className={"cursor-pointer"}
+                                                            key={idx}
+                                                            variant="outline"
+                                                            size="sm"
+                                                            asChild
+                                                        >
+                                                            <a
+                                                                href={formatUrl(social)}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                            >
+                                                                <GithubIcon className="h-4 w-4"/>
+                                                            </a>
+                                                        </Button>
+                                                    );
+                                                } else if (social.includes("youtube.com")) {
+                                                    return (
+                                                        <Button
+                                                            className={"cursor-pointer"}
+                                                            key={idx}
+                                                            variant="outline"
+                                                            size="sm"
+                                                            asChild
+                                                        >
+                                                            <a
+                                                                href={formatUrl(social)}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                            >
+                                                                <YoutubeIcon className="h-4 w-4 text-[#c4302b]"/>
+                                                            </a>
+                                                        </Button>
+                                                    );
+                                                } else if (social.includes("instagram")) {
+                                                    return (
+                                                        <Button
+                                                            className={"cursor-pointer"}
+                                                            key={idx}
+                                                            variant="outline"
+                                                            size="sm"
+                                                            asChild
+                                                        >
+                                                            <a
+                                                                href={formatUrl(social)}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                            >
+                                                                <InstagramIcon className="h-4 w-4"/>
+                                                            </a>
+                                                        </Button>
+                                                    );
+                                                }
+                                                return (
+                                                    <Button
+                                                        className={"cursor-pointer"}
+                                                        key={idx}
+                                                        variant="outline"
+                                                        size="sm"
+                                                        asChild
                                                     >
-                                                        <LinkedinIcon className="h-4 w-4 text-[#0e76a8]"/>
-                                                    </a>
-                                                </Button>
-                                            );
-                                        } else if (
-                                            social.includes("twitter") ||
-                                            social.includes("x.com")
-                                        ) {
-                                            return (
-                                                <Button
-                                                    className={"cursor-pointer"}
-                                                    key={idx}
-                                                    variant="outline"
-                                                    size="sm"
-                                                    asChild
-                                                >
-                                                    <a
-                                                        href={formatUrl(social)}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                    >
-                                                        <TwitterIcon className="h-4 w-4 text-[#00acee]"/>
-                                                    </a>
-                                                </Button>
-                                            );
-                                        } else if (social.includes("github.com")) {
-                                            return (
-                                                <Button
-                                                    className={"cursor-pointer"}
-                                                    key={idx}
-                                                    variant="outline"
-                                                    size="sm"
-                                                    asChild
-                                                >
-                                                    <a
-                                                        href={formatUrl(social)}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                    >
-                                                        <GithubIcon className="h-4 w-4"/>
-                                                    </a>
-                                                </Button>
-                                            );
-                                        } else if (social.includes("youtube.com")) {
-                                            return (
-                                                <Button
-                                                    className={"cursor-pointer"}
-                                                    key={idx}
-                                                    variant="outline"
-                                                    size="sm"
-                                                    asChild
-                                                >
-                                                    <a
-                                                        href={formatUrl(social)}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                    >
-                                                        <YoutubeIcon className="h-4 w-4 text-[#c4302b]"/>
-                                                    </a>
-                                                </Button>
-                                            );
-                                        } else if (social.includes("instagram")) {
-                                            return (
-                                                <Button
-                                                    className={"cursor-pointer"}
-                                                    key={idx}
-                                                    variant="outline"
-                                                    size="sm"
-                                                    asChild
-                                                >
-                                                    <a
-                                                        href={formatUrl(social)}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                    >
-                                                        <InstagramIcon className="h-4 w-4"/>
-                                                    </a>
-                                                </Button>
-                                            );
-                                        }
-                                        return (
-                                            <Button
-                                                className={"cursor-pointer"}
-                                                key={idx}
-                                                variant="outline"
-                                                size="sm"
-                                                asChild
-                                            >
-                                                <a
-                                                    href={formatUrl(social)}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                >
-                                                    <GlobeIcon className="h-4 w-4"/>
-                                                </a>
-                                            </Button>
-                                        );
-                                    })}
-                                </div>
+                                                        <a
+                                                            href={formatUrl(social)}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                        >
+                                                            <GlobeIcon className="h-4 w-4"/>
+                                                        </a>
+                                                    </Button>
+                                                );
+                                            })}
+                                        </div>
+                                    </DialogContent>
+                                </Dialog>
                             </TableCell>
                             <TableCell>
                                 <div className="flex gap-2">
@@ -440,34 +428,34 @@ export function RankingTable({data}: RankingTableProps) {
                                                             </CardHeader>
                                                             <CardContent className="space-y-2">
                                                                 <div className="flex justify-between">
-                                  <span className="text-sm text-slate-600">
-                                    Total Líquido:
-                                  </span>
+                                                                      <span className="text-sm text-slate-600">
+                                                                        Total Líquido:
+                                                                      </span>
                                                                     <span className="font-semibold text-green-600">
-                                    {formatCurrency(
-                                        selectedParticipant.data.total_liquido
-                                    )}
-                                  </span>
+                                                                        {formatCurrency(
+                                                                            selectedParticipant.data.total_liquido
+                                                                        )}
+                                                                    </span>
                                                                 </div>
                                                                 <div className="flex justify-between">
-                                  <span className="text-sm text-slate-600">
-                                    Total Bruto:
-                                  </span>
+                                                                  <span className="text-sm text-slate-600">
+                                                                    Total Bruto:
+                                                                  </span>
                                                                     <span>
-                                    {formatCurrency(
-                                        selectedParticipant.data.total_bruto
-                                    )}
-                                  </span>
+                                                                    {formatCurrency(
+                                                                        selectedParticipant.data.total_bruto
+                                                                    )}
+                                                                  </span>
                                                                 </div>
                                                                 <div className="flex justify-between">
-                                  <span className="text-sm text-slate-600">
-                                    Total Taxas:
-                                  </span>
+                                                                  <span className="text-sm text-slate-600">
+                                                                    Total Taxas:
+                                                                  </span>
                                                                     <span className="text-red-600">
-                                    {formatCurrency(
-                                        selectedParticipant.data.total_taxas
-                                    )}
-                                  </span>
+                                                                        {formatCurrency(
+                                                                            selectedParticipant.data.total_taxas
+                                                                        )}
+                                                                      </span>
                                                                 </div>
                                                             </CardContent>
                                                         </Card>
@@ -479,9 +467,9 @@ export function RankingTable({data}: RankingTableProps) {
                                                             </CardHeader>
                                                             <CardContent className="space-y-2">
                                                                 <div className="flex justify-between">
-                                  <span className="text-sm text-slate-600">
-                                    P99:
-                                  </span>
+                                                                  <span className="text-sm text-slate-600">
+                                                                    P99:
+                                                                  </span>
                                                                     <span>
                                                                         {formatMsToScientific(selectedParticipant.data.p99.valor).concat("ms")}
 
@@ -512,7 +500,6 @@ export function RankingTable({data}: RankingTableProps) {
                                                             </CardContent>
                                                         </Card>
                                                     </div>
-
                                                     <div className="grid lg:grid-cols-2 gap-4">
                                                         <Card>
                                                             <CardHeader className="pb-2">
@@ -575,7 +562,7 @@ export function RankingTable({data}: RankingTableProps) {
                                     Storage:
                                   </span>
                                                                     <div className="flex flex-wrap gap-1 mt-1">
-                                                                        {selectedParticipant.storages.map(
+                                                                        {selectedParticipant?.storages?.map(
                                                                             (storage) => (
                                                                                 <Badge
                                                                                     key={storage}
@@ -588,6 +575,21 @@ export function RankingTable({data}: RankingTableProps) {
                                                                         )}
                                                                     </div>
                                                                 </div>
+                                                            </CardContent>
+                                                        </Card>
+                                                    </div>
+                                                    <div className="grid lg:grid-cols-1 gap-4">
+                                                        <Card>
+                                                            <CardHeader className="pb-2">
+                                                                <CardTitle className="text-sm">
+                                                                    Pagamentos
+                                                                </CardTitle>
+                                                            </CardHeader>
+                                                            <CardContent className="space-y-2">
+                                                                <PieChartDF
+                                                                    default_router={selectedParticipant.data.pagamentos_realizados_default.num_pagamentos}
+                                                                    fallback_router={selectedParticipant.data.pagamentos_realizados_fallback.num_pagamentos}
+                                                                />
                                                             </CardContent>
                                                         </Card>
                                                     </div>
