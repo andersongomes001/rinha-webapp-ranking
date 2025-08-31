@@ -34,8 +34,20 @@ function App() {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 segundos timeout
 
+            // const response = await fetch(
+            //     "https://rinha-api-ranking.onrender.com/ranking",
+            //     {
+            //         cache: "no-store",
+            //         signal: controller.signal,
+            //         headers: {
+            //             Accept: "application/json",
+            //             "Content-Type": "application/json",
+            //         },
+            //     }
+            // );
+
             const response = await fetch(
-                "https://rinha-api-ranking.onrender.com/ranking",
+                "result_final.json",
                 {
                     cache: "no-store",
                     signal: controller.signal,
